@@ -2,35 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
+import people from '../../helpers/people';
 import {
   getIsAuthenticated,
   getAuthenticatedUser,
-  getFollowingList,
   getIsAuthFetching,
+  getFollowingList,
 } from '../../reducers';
-
 import InterestingPeople from '../../components/Sidebar/InterestingPeople';
 import InterestingPeopleWithAPI from '../../components/Sidebar/InterestingPeopleWithAPI';
+import PostRecommendation from '../../components/Sidebar/PostRecommendation';
 import StartNow from '../../components/Sidebar/StartNow';
 import SignUp from '../../components/Sidebar/SignUp';
-import PostRecommendation from '../../components/Sidebar/PostRecommendation';
 
 @connect(state => ({
   authenticated: getIsAuthenticated(state),
   authenticatedUser: getAuthenticatedUser(state),
+  authFetching: getIsAuthFetching(state),
   followingList: getFollowingList(state),
-  isAuthFetching: getIsAuthFetching(state),
-}))
-@connect(state => ({
-  authenticated: getIsAuthenticated(state),
-  authenticatedUser: getAuthenticatedUser(state),
 }))
 export default class RightSidebar extends React.Component {
   static propTypes = {
     authenticated: PropTypes.bool.isRequired,
     authenticatedUser: PropTypes.shape().isRequired,
+    authFetching: PropTypes.bool.isRequired,
     followingList: PropTypes.arrayOf(PropTypes.string).isRequired,
-    isAuthFetching: PropTypes.bool.isRequired,
     showPostRecommendation: PropTypes.bool,
   };
 
@@ -62,8 +58,7 @@ export default class RightSidebar extends React.Component {
     });
 
   render() {
-    const { authenticated, authenticatedUser, showPostRecommendation, isAuthFetching } = this.props;
-
+    const { authenticated, authenticatedUser, authFetching, showPostRecommendation } = this.props;
     return (
       <div>
         {!authenticated && <SignUp />}
@@ -86,12 +81,12 @@ export default class RightSidebar extends React.Component {
             component={() => (
               <InterestingPeopleWithAPI
                 authenticatedUser={authenticatedUser}
-                authFetching={isAuthFetching}
+                authFetching={authFetching}
               />
             )}
           />
         </Switch>
-        {showPostRecommendation && <PostRecommendation isAuthFetching={isAuthFetching} />}
+        {showPostRecommendation && <PostRecommendation isAuthFetching={authFetching} />}
       </div>
     );
   }
