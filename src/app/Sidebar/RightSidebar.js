@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import people from '../../helpers/people';
-
 import {
   getIsAuthenticated,
   getAuthenticatedUser,
@@ -12,18 +10,21 @@ import {
 } from '../../reducers';
 
 import InterestingPeople from '../../components/Sidebar/InterestingPeople';
+import InterestingPeopleWithAPI from '../../components/Sidebar/InterestingPeopleWithAPI';
 import StartNow from '../../components/Sidebar/StartNow';
 import SignUp from '../../components/Sidebar/SignUp';
 import PostRecommendation from '../../components/Sidebar/PostRecommendation';
 
-@connect(
-  state => ({
-    authenticated: getIsAuthenticated(state),
-    authenticatedUser: getAuthenticatedUser(state),
-    followingList: getFollowingList(state),
-    isAuthFetching: getIsAuthFetching(state),
-  }),
-)
+@connect(state => ({
+  authenticated: getIsAuthenticated(state),
+  authenticatedUser: getAuthenticatedUser(state),
+  followingList: getFollowingList(state),
+  isAuthFetching: getIsAuthFetching(state),
+}))
+@connect(state => ({
+  authenticated: getIsAuthenticated(state),
+  authenticatedUser: getAuthenticatedUser(state),
+}))
 export default class RightSidebar extends React.Component {
   static propTypes = {
     authenticated: PropTypes.bool.isRequired,
@@ -62,25 +63,31 @@ export default class RightSidebar extends React.Component {
 
   render() {
     const { authenticated, authenticatedUser, showPostRecommendation, isAuthFetching } = this.props;
-    const InterestingPeopleWithData = () => (
-      <InterestingPeople
-        users={this.state.randomPeople}
-        onRefresh={this.handleRefreshInterestingPeople}
-      />
-    );
 
     return (
       <div>
         {!authenticated && <SignUp />}
         <Switch>
-          <Route path="/@:name" component={InterestingPeopleWithData} />
           <Route
+            exact
             path="/"
             render={() => (
               <div>
                 {authenticatedUser.last_root_post === '1970-01-01T00:00:00' && <StartNow />}
-                {!showPostRecommendation && <InterestingPeopleWithData />}
+                <InterestingPeople
+                  users={this.state.randomPeople}
+                  onRefresh={this.handleRefreshInterestingPeople}
+                />
               </div>
+            )}
+          />
+          <Route
+            path="/@:name"
+            component={() => (
+              <InterestingPeopleWithAPI
+                authenticatedUser={authenticatedUser}
+                authFetching={isAuthFetching}
+              />
             )}
           />
         </Switch>

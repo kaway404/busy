@@ -1165,7 +1165,7 @@ exports[`Storyshots Sidebar Interesting People 1`] = `
   }
 >
   <div
-    className="InterestingPeople"
+    className="Loading Loading--center"
   >
     <div
       className="InterestingPeople__container"
@@ -1343,6 +1343,9 @@ exports[`Storyshots Sidebar Interesting People 1`] = `
         </a>
       </h4>
     </div>
+    <i
+      className="anticon anticon-spin anticon-loading Loading__icon"
+    />
   </div>
 </div>
 `;
