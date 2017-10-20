@@ -33,7 +33,6 @@ export default class RightSidebar extends React.Component {
   static defaultProps = {
     showPostRecommendation: false,
   };
-
   constructor(props) {
     super(props);
     this.state = {
